@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Frightened Lion | A Blue Gold Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+        :root {
+            --blue-deep: #0f172a;
+            --blue-royal: #1e3a8a;
+            --gold-main: #fbbf24;
+            --gold-light: #fcd34d;
+            --gold-dark: #b45309;
+        }
+
+        body {
+            background: radial-gradient(circle at center, var(--blue-royal), var(--blue-deep));
+            font-family: 'Lato', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .font-header {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Gold Gradient Text */
+        .text-gold-gradient {
+            background: linear-gradient(to bottom, var(--gold-light), var(--gold-main));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Gold Button Styling */
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-main), var(--gold-dark));
+            border: 2px solid var(--gold-light);
+            color: var(--blue-deep);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(251, 191, 36, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-gold:active {
+            transform: translateY(0);
+        }
+
+        /* Input Styling */
+        .input-gold {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--gold-dark);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 99px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            font-family: 'Lato', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-gold:focus {
+            border-color: var(--gold-main);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+        }
+
+        /* Leaderboard Styling */
+        .leaderboard-table {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .leaderboard-row {
+            background: rgba(30, 58, 138, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .leaderboard-row:hover {
+            transform: scale(1.02);
+            background: rgba(30, 58, 138, 0.6);
+        }
+
+        .leaderboard-cell {
+            padding: 12px;
+            border-top: 1px solid rgba(251, 191, 36, 0.2);
+            border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .leaderboard-cell:first-child {
+            border-left: 1px solid rgba(251, 191, 36, 0.2);
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .leaderboard-cell:last-child {
+            border-right: 1px solid rgba(251, 191, 36, 0.2);
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            text-align: right;
+            font-weight: bold;
+            color: var(--gold-main);
+        }
+
+        /* Nav Tabs */
+        .nav-tab {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: #9ca3af;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            background: var(--blue-royal);
+            border-color: var(--gold-main);
+            color: var(--gold-light);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+        }
+
+        /* Card Styling */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Word Chips */
+        .word-chip {
+            background: rgba(30, 58, 138, 0.6);
+            border: 1px solid var(--gold-main);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            user-select: none;
+        }
+        
+        .word-chip:hover {
+            background: var(--blue-royal);
+            transform: scale(1.05);
+        }
+
+        .letter-chip {
+            background: rgba(30, 58, 138, 0.6);
+            border: 1px solid var(--gold-main);
+            color: white;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            font-size: 1.25rem;
+            user-select: none;
+        }
+
+        .letter-chip:hover {
+            background: var(--blue-royal);
+            transform: scale(1.1);
+        }
+
+        /* Memory Card Flip Styling */
+        .memory-card {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .memory-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card-front, .memory-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+            border: 2px solid var(--gold-dark);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .memory-card-front {
+            background: linear-gradient(135deg, var(--blue-royal), var(--blue-deep));
+            color: var(--gold-main);
+            font-size: 2rem;
+        }
+
+        .memory-card-back {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-main));
+            color: var(--blue-deep);
+            transform: rotateY(180deg);
+            font-size: 2.5rem;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        .pulse-gold {
+            animation: pulse-gold 2s infinite;
+        }
+
+        .progress-bar-container {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--gold-dark);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-main));
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Game Container -->
+    <div id="game-container" class="glass-card w-full max-w-3xl rounded-2xl p-6 md:p-8 relative overflow-hidden min-h-[650px] flex flex-col">
+        
+        <!-- Decorative Borders -->
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600"></div>
+        <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600"></div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center gap-2 md:gap-3 mb-6 z-10 relative flex-wrap">
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-tab active px-3 py-2 md:px-5 md:py-2 rounded-full font-bold uppercase text-xs md:text-sm tracking-wider">
+                Story Quiz
+            </button>
+            <button onclick="switchTab('scramble')" id="tab-scramble" class="nav-tab px-3 py-2 md:px-5 md:py-2 rounded-full font-bold uppercase text-xs md:text-sm tracking-wider">
+                Sentences
+            </button>
+            <button onclick="switchTab('word')" id="tab-word" class="nav-tab px-3 py-2 md:px-5 md:py-2 rounded-full font-bold uppercase text-xs md:text-sm tracking-wider">
+                Word Scramble
+            </button>
+            <button onclick="switchTab('dictation')" id="tab-dictation" class="nav-tab px-3 py-2 md:px-5 md:py-2 rounded-full font-bold uppercase text-xs md:text-sm tracking-wider">
+                Dictation
+            </button>
+            <button onclick="switchTab('memory')" id="tab-memory" class="nav-tab px-3 py-2 md:px-5 md:py-2 rounded-full font-bold uppercase text-xs md:text-sm tracking-wider">
+                Memory
+            </button>
+            <button onclick="switchTab('leaderboard')" id="tab-leaderboard" class="nav-tab px-3 py-2 md:px-5 md:py-2 rounded-full font-bold uppercase text-xs md:text-sm tracking-wider">
+                🏆 Leaders
+            </button>
+        </div>
+
+        <!-- ==================== QUIZ SECTION ==================== -->
+        <div id="quiz-view" class="flex-grow flex flex-col">
+            <!-- Quiz Start Screen -->
+            <div id="quiz-start" class="text-center space-y-8 flex-grow flex flex-col justify-center items-center">
+                <div class="animate-float mb-2">
+                    <span class="text-8xl">🦁</span>
+                    <span class="text-6xl absolute -right-4 top-0">🐸</span>
+                </div>
+                
+                <h1 class="font-header text-4xl md:text-5xl font-bold text-gold-gradient tracking-wide">
+                    The Frightened Lion
+                </h1>
+                
+                <div class="bg-blue-900/50 p-6 rounded-xl border border-yellow-500/30 max-w-md mx-auto">
+                    <p class="text-gray-200">
+                        Help the Lion overcome his fears by answering questions about the story correctly!
+                    </p>
+                </div>
+
+                <div class="flex flex-col items-center gap-4">
+                    <button onclick="startQuizGame()" class="btn-gold px-12 py-3 rounded-full text-lg pulse-gold">
+                        Play Quiz
+                    </button>
+                    <a href="https://www.youtube.com/watch?v=17o2rPGryuk" target="_blank" class="text-yellow-400 hover:text-white text-sm font-bold underline decoration-yellow-500/50 hover:decoration-white underline-offset-4 transition">
+                        📺 Watch Story Video
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quiz Gameplay -->
+            <div id="quiz-game" class="hidden flex-col h-full">
+                <div class="flex justify-between items-center mb-6 border-b border-yellow-500/30 pb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🦁</span>
+                        <span class="text-yellow-400 font-bold">Score: <span id="quiz-score">0</span></span>
+                    </div>
+                    <div class="w-1/2">
+                        <div class="flex justify-between text-xs text-yellow-500 mb-1 uppercase font-bold">
+                            <span>Progress</span>
+                            <span id="quiz-progress-text">1/10</span>
+                        </div>
+                        <div class="progress-bar-container h-2">
+                            <div id="quiz-progress-fill" class="progress-bar-fill h-full w-0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-grow flex flex-col justify-center mb-6">
+                    <div id="quiz-image-area" class="text-center text-6xl mb-4 animate-float"></div>
+                    <h2 id="quiz-question" class="font-header text-2xl text-white text-center font-bold leading-relaxed"></h2>
+                </div>
+
+                <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
+
+                <div id="quiz-feedback" class="hidden text-center p-3 rounded-xl bg-blue-900/50 border border-yellow-500/30">
+                    <p id="quiz-feedback-text" class="font-bold text-lg mb-2"></p>
+                    <button onclick="nextQuizQuestion()" class="btn-gold px-6 py-1 rounded-full text-sm">Next ➜</button>
+                </div>
+            </div>
+
+            <!-- Quiz End -->
+            <div id="quiz-end" class="hidden text-center space-y-6 flex-grow flex flex-col justify-center items-center">
+                <div class="text-8xl mb-4">🏆</div>
+                <h2 class="font-header text-3xl text-gold-gradient font-bold">Quest Complete!</h2>
+                <div class="text-4xl font-bold text-yellow-400 mb-2" id="quiz-final-score">0</div>
+                <p class="text-yellow-200 font-serif italic">"Imagination can make things seem scarier than they are."</p>
+                
+                <!-- Save Score Form -->
+                <div class="w-full max-w-xs space-y-3 mt-4">
+                    <input type="text" id="player-name-quiz" class="input-gold" placeholder="Enter Your Name" maxlength="12">
+                    <button onclick="saveQuizScore()" class="btn-gold px-8 py-2 rounded-full w-full">Save Score</button>
+                </div>
+
+                <button onclick="resetQuiz()" class="text-sm text-gray-400 hover:text-white underline mt-4">Play Again without Saving</button>
+            </div>
+        </div>
+
+        <!-- ==================== SENTENCE SCRAMBLE SECTION ==================== -->
+        <div id="scramble-view" class="hidden flex-grow flex flex-col">
+             <!-- Scramble Start Screen -->
+             <div id="scramble-start" class="text-center space-y-8 flex-grow flex flex-col justify-center items-center">
+                <div class="animate-float mb-2">
+                    <span class="text-8xl">📝</span>
+                </div>
+                
+                <h1 class="font-header text-4xl md:text-5xl font-bold text-gold-gradient tracking-wide">
+                    Sentence Scramble
+                </h1>
+                
+                <div class="bg-blue-900/50 p-6 rounded-xl border border-yellow-500/30 max-w-md mx-auto">
+                    <p class="text-gray-200">
+                        The story sentences are mixed up! Click the words in the correct order to fix them.
+                    </p>
+                </div>
+
+                <button onclick="startScrambleGame()" class="btn-gold px-12 py-3 rounded-full text-lg pulse-gold">
+                    Start Unscrambling
+                </button>
+            </div>
+
+            <!-- Scramble Gameplay -->
+            <div id="scramble-game" class="hidden flex-col h-full">
+                <div class="flex justify-between items-center mb-6 border-b border-yellow-500/30 pb-4">
+                    <div class="text-yellow-400 font-bold">Round <span id="scramble-round">1</span>/15</div>
+                    <div class="text-yellow-400 font-bold" id="scramble-status">Unsolved</div>
+                </div>
+
+                <!-- Answer Area -->
+                <div class="bg-black/30 p-6 rounded-xl min-h-[100px] border-2 border-dashed border-blue-500/30 flex flex-wrap gap-2 items-center justify-center mb-8" id="answer-area">
+                    <span class="text-gray-500 italic text-sm" id="placeholder-text">Click words below to build the sentence...</span>
+                </div>
+
+                <!-- Word Bank -->
+                <div class="flex flex-wrap gap-3 justify-center mb-8" id="word-bank">
+                    <!-- Chips go here -->
+                </div>
+
+                <!-- Controls -->
+                <div class="mt-auto flex justify-center gap-4">
+                    <button onclick="resetCurrentScramble()" class="px-6 py-2 rounded-full border border-red-400 text-red-300 hover:bg-red-900/30 text-sm font-bold uppercase">Reset</button>
+                    <button onclick="checkScramble()" class="btn-gold px-8 py-2 rounded-full text-sm">Check Answer</button>
+                </div>
+
+                <div id="scramble-feedback" class="hidden mt-4 text-center">
+                    <p id="scramble-msg" class="text-lg font-bold mb-2"></p>
+                    <button id="scramble-next-btn" onclick="nextScrambleRound()" class="btn-gold px-6 py-2 rounded-full text-sm">Next Sentence ➜</button>
+                </div>
+            </div>
+
+             <!-- Scramble End -->
+             <div id="scramble-end" class="hidden text-center space-y-6 flex-grow flex flex-col justify-center items-center">
+                <div class="text-8xl mb-4">✨</div>
+                <h2 class="font-header text-3xl text-gold-gradient font-bold">Great Grammar!</h2>
+                <p class="text-gray-300">You fixed all 15 sentences from the story.</p>
+                <button onclick="resetScramble()" class="btn-gold px-8 py-2 rounded-full mt-4">Play Again</button>
+            </div>
+        </div>
+
+        <!-- ==================== WORD SCRAMBLE SECTION ==================== -->
+        <div id="word-view" class="hidden flex-grow flex flex-col">
+             <!-- Word Start Screen -->
+             <div id="word-start" class="text-center space-y-8 flex-grow flex flex-col justify-center items-center">
+                <div class="animate-float mb-2">
+                    <span class="text-8xl">🔡</span>
+                </div>
+                
+                <h1 class="font-header text-4xl md:text-5xl font-bold text-gold-gradient tracking-wide">
+                    Word Scramble
+                </h1>
+                
+                <div class="bg-blue-900/50 p-6 rounded-xl border border-yellow-500/30 max-w-md mx-auto">
+                    <p class="text-gray-200">
+                        Can you spell the story words? Unscramble the letters using the hints provided!
+                    </p>
+                </div>
+
+                <button onclick="startWordGame()" class="btn-gold px-12 py-3 rounded-full text-lg pulse-gold">
+                    Start Spelling
+                </button>
+            </div>
+
+            <!-- Word Gameplay -->
+            <div id="word-game" class="hidden flex-col h-full">
+                <div class="flex justify-between items-center mb-6 border-b border-yellow-500/30 pb-4">
+                    <div class="text-yellow-400 font-bold">Word <span id="word-round">1</span>/20</div>
+                    <div class="text-yellow-400 font-bold" id="word-status">Unsolved</div>
+                </div>
+
+                <div class="text-center mb-4">
+                     <p class="text-gray-400 text-sm uppercase tracking-widest font-bold mb-1">Hint</p>
+                     <p id="word-hint" class="text-gold-light text-xl font-header font-bold animate-float">???</p>
+                </div>
+
+                <!-- Letter Answer Area -->
+                <div class="bg-black/30 p-6 rounded-xl min-h-[100px] border-2 border-dashed border-blue-500/30 flex flex-wrap gap-2 items-center justify-center mb-8" id="letter-answer-area">
+                    <span class="text-gray-500 italic text-sm" id="letter-placeholder">Click letters below...</span>
+                </div>
+
+                <!-- Letter Bank -->
+                <div class="flex flex-wrap gap-2 justify-center mb-8" id="letter-bank">
+                    <!-- Letter Chips go here -->
+                </div>
+
+                <!-- Controls -->
+                <div class="mt-auto flex justify-center gap-4">
+                    <button onclick="resetCurrentWord()" class="px-6 py-2 rounded-full border border-red-400 text-red-300 hover:bg-red-900/30 text-sm font-bold uppercase">Reset</button>
+                    <button onclick="checkWord()" class="btn-gold px-8 py-2 rounded-full text-sm">Check Spelling</button>
+                </div>
+
+                <div id="word-feedback" class="hidden mt-4 text-center">
+                    <p id="word-msg" class="text-lg font-bold mb-2"></p>
+                    <button id="word-next-btn" onclick="nextWordRound()" class="btn-gold px-6 py-2 rounded-full text-sm">Next Word ➜</button>
+                </div>
+            </div>
+
+             <!-- Word End -->
+             <div id="word-end" class="hidden text-center space-y-6 flex-grow flex flex-col justify-center items-center">
+                <div class="text-8xl mb-4">🌟</div>
+                <h2 class="font-header text-3xl text-gold-gradient font-bold">Spelling Master!</h2>
+                <p class="text-gray-300">You unscrambled all 20 words.</p>
+                <button onclick="resetWordGame()" class="btn-gold px-8 py-2 rounded-full mt-4">Play Again</button>
+            </div>
+        </div>
+
+        <!-- ==================== DICTATION SECTION ==================== -->
+        <div id="dictation-view" class="hidden flex-grow flex flex-col">
+            <!-- Dictation Start Screen -->
+            <div id="dictation-start" class="text-center space-y-8 flex-grow flex flex-col justify-center items-center">
+                <div class="animate-float mb-2">
+                    <span class="text-8xl">🎙️</span>
+                </div>
+                
+                <h1 class="font-header text-4xl md:text-5xl font-bold text-gold-gradient tracking-wide">
+                    Forest Dictation
+                </h1>
+                
+                <div class="bg-blue-900/50 p-6 rounded-xl border border-yellow-500/30 max-w-md mx-auto">
+                    <p class="text-gray-200">
+                        Listen to the audio and type exactly what you hear! Be careful with spelling, punctuation, and capitalization.
+                    </p>
+                </div>
+
+                <button onclick="startDictationGame()" class="btn-gold px-12 py-3 rounded-full text-lg pulse-gold">
+                    Start Dictation
+                </button>
+            </div>
+
+            <!-- Dictation Gameplay -->
+            <div id="dictation-game" class="hidden flex-col h-full items-center">
+                <div class="flex justify-between items-center w-full mb-6 border-b border-yellow-500/30 pb-4">
+                    <div class="text-yellow-400 font-bold">Sentence <span id="dictation-round">1</span>/10</div>
+                </div>
+
+                <div class="flex-grow flex flex-col items-center justify-center w-full max-w-xl">
+                    <button onclick="playDictationAudio()" class="bg-blue-600 hover:bg-blue-500 rounded-full w-24 h-24 flex items-center justify-center mb-8 shadow-lg shadow-blue-500/30 transition transform hover:scale-105 group">
+                        <span class="text-4xl group-hover:scale-110 transition">🔊</span>
+                    </button>
+                    <p class="text-gray-400 text-sm mb-2 uppercase tracking-wide">Click the speaker to listen</p>
+
+                    <input type="text" id="dictation-input" class="input-gold w-full text-lg mb-6" placeholder="Type sentence here..." autocomplete="off">
+                    
+                    <button onclick="checkDictation()" class="btn-gold px-10 py-3 rounded-full text-lg">Check Answer</button>
+
+                    <div id="dictation-feedback" class="hidden mt-6 text-center w-full bg-blue-900/50 p-4 rounded-xl border border-yellow-500/30">
+                        <p id="dictation-msg" class="text-lg font-bold mb-2"></p>
+                        <p id="dictation-correction" class="text-yellow-200 italic mb-4 hidden"></p>
+                        <button onclick="nextDictation()" class="btn-gold px-6 py-2 rounded-full text-sm">Next Sentence ➜</button>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Dictation End -->
+             <div id="dictation-end" class="hidden text-center space-y-6 flex-grow flex flex-col justify-center items-center">
+                <div class="text-8xl mb-4">🎧</div>
+                <h2 class="font-header text-3xl text-gold-gradient font-bold">Dictation Complete!</h2>
+                <p class="text-gray-300">You have completed all 10 sentences.</p>
+                <div class="text-4xl font-bold text-yellow-400 mb-2" id="dictation-final-score">0 / 10</div>
+                <button onclick="resetDictationGame()" class="btn-gold px-8 py-2 rounded-full mt-4">Play Again</button>
+            </div>
+        </div>
+
+        <!-- ==================== MEMORY MATCH SECTION ==================== -->
+        <div id="memory-view" class="hidden flex-grow flex flex-col">
+            <!-- Memory Start Screen -->
+            <div id="memory-start" class="text-center space-y-8 flex-grow flex flex-col justify-center items-center">
+               <div class="animate-float mb-2">
+                   <span class="text-8xl">🃏</span>
+               </div>
+               
+               <h1 class="font-header text-4xl md:text-5xl font-bold text-gold-gradient tracking-wide">
+                   Memory Match
+               </h1>
+               
+               <div class="bg-blue-900/50 p-6 rounded-xl border border-yellow-500/30 max-w-md mx-auto">
+                   <p class="text-gray-200">
+                       Find the matching pairs of story items hidden behind the cards. Test your memory!
+                   </p>
+               </div>
+
+               <button onclick="startMemoryGame()" class="btn-gold px-12 py-3 rounded-full text-lg pulse-gold">
+                   Start Matching
+               </button>
+           </div>
+
+           <!-- Memory Gameplay -->
+           <div id="memory-game" class="hidden flex-col h-full">
+               <div class="flex justify-between items-center mb-6 border-b border-yellow-500/30 pb-4">
+                   <div class="text-yellow-400 font-bold">Moves: <span id="memory-moves">0</span></div>
+                   <div class="text-yellow-400 font-bold">Pairs: <span id="memory-pairs">0</span>/8</div>
+               </div>
+
+               <div id="memory-grid" class="grid grid-cols-4 gap-3 md:gap-4 max-w-lg mx-auto w-full aspect-square">
+                   <!-- Cards injected here -->
+               </div>
+           </div>
+
+            <!-- Memory End -->
+            <div id="memory-end" class="hidden text-center space-y-6 flex-grow flex flex-col justify-center items-center">
+               <div class="text-8xl mb-4">🧠</div>
+               <h2 class="font-header text-3xl text-gold-gradient font-bold">Sharp Memory!</h2>
+               <p class="text-gray-300">You found all the pairs.</p>
+               <p class="text-yellow-400 font-bold text-xl">Total Moves: <span id="final-moves">0</span></p>
+               
+               <!-- Save Score Form -->
+               <div class="w-full max-w-xs space-y-3 mt-4">
+                   <input type="text" id="player-name-memory" class="input-gold" placeholder="Enter Your Name" maxlength="12">
+                   <button onclick="saveMemoryScore()" class="btn-gold px-8 py-2 rounded-full w-full">Save Record</button>
+               </div>
+
+               <button onclick="startMemoryGame()" class="text-sm text-gray-400 hover:text-white underline mt-4">Play Again without Saving</button>
+           </div>
+       </div>
+
+       <!-- ==================== LEADERBOARD SECTION ==================== -->
+       <div id="leaderboard-view" class="hidden flex-grow flex flex-col items-center">
+           <div class="text-center space-y-4 w-full h-full overflow-y-auto custom-scrollbar">
+               <div class="animate-float mb-2">
+                   <span class="text-6xl">👑</span>
+               </div>
+               
+               <h1 class="font-header text-3xl md:text-4xl font-bold text-gold-gradient tracking-wide mb-6">
+                   Hall of Fame
+               </h1>
+
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                   <!-- Quiz High Scores -->
+                   <div class="bg-blue-900/40 p-4 rounded-xl border border-yellow-500/20">
+                       <h3 class="text-xl font-bold text-yellow-400 mb-4 border-b border-yellow-500/30 pb-2">Top Quiz Scores</h3>
+                       <div id="quiz-leaderboard-list" class="space-y-2">
+                           <!-- Injected via JS -->
+                           <p class="text-gray-400 text-sm italic">No scores yet...</p>
+                       </div>
+                   </div>
+
+                   <!-- Memory Records -->
+                   <div class="bg-blue-900/40 p-4 rounded-xl border border-yellow-500/20">
+                       <h3 class="text-xl font-bold text-yellow-400 mb-4 border-b border-yellow-500/30 pb-2">Memory Masters (Moves)</h3>
+                       <div id="memory-leaderboard-list" class="space-y-2">
+                            <!-- Injected via JS -->
+                            <p class="text-gray-400 text-sm italic">No records yet...</p>
+                       </div>
+                   </div>
+               </div>
+               
+               <button onclick="clearLeaderboard()" class="text-xs text-red-400/50 hover:text-red-400 mt-8 underline">Clear All Scores</button>
+           </div>
+       </div>
+
+    </div>
+
+    <script>
+        // ==================== TABS LOGIC ====================
+        function switchTab(tabName) {
+            // Hide all views
+            ['quiz', 'scramble', 'word', 'dictation', 'memory', 'leaderboard'].forEach(t => {
+                const el = document.getElementById(`${t}-view`);
+                const tab = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+                if(tab) tab.classList.remove('active');
+            });
+
+            // Show selected view and activate tab
+            document.getElementById(`${tabName}-view`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            if (tabName === 'leaderboard') {
+                renderLeaderboard();
+            }
+        }
+
+        // ==================== QUIZ LOGIC ====================
+        const quizQuestions = [
+            { text: "What was Lion doing at the start of the story?", emoji: "📖", options: ["Eating dinner", "Getting ready for bed", "Playing outside", "Watching TV"], correct: 1 },
+            { text: "What did Lion turn on before going to sleep?", emoji: "💡", options: ["The TV", "The radio", "His night light", "A flashlight"], correct: 2 },
+            { text: "What sound did Lion hear at the window?", emoji: "🔊", options: ["Moo Moo", "Tap Tap", "Buzz Buzz", "Roar Roar"], correct: 1 },
+            { text: "What did Lion think the sound was?", emoji: "👹", options: ["A monster", "A bird", "The wind", "His mom"], correct: 0 },
+            { text: "What did Lion grab first for protection?", emoji: "⚾", options: ["A pillow", "A sword", "A baseball bat", "A frying pan"], correct: 2 },
+            { text: "What did Lion put on his head?", emoji: "⛑️", options: ["A crown", "A baseball cap", "A bicycle helmet", "A bucket"], correct: 2 },
+            { text: "Where did Lion hide?", emoji: "🛏️", options: ["In the closet", "Under the bed", "Behind the door", "In the bathroom"], correct: 1 },
+            { text: "Who was actually making the tapping sound?", emoji: "🐸", options: ["A giant", "A mouse", "A little frog", "A bird"], correct: 2 },
+            { text: "What was the frog wearing?", emoji: "🩰", options: ["Jeans", "A spacesuit", "A tutu and tap shoes", "Pajamas"], correct: 2 },
+            { text: "What is the moral of the story?", emoji: "💭", options: ["Frogs are scary", "Lions are brave", "Imagination can make things scary", "Always lock the door"], correct: 2 }
+        ];
+
+        let quizIndex = 0;
+        let quizScore = 0;
+
+        function startQuizGame() {
+            quizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-game').classList.remove('hidden');
+            document.getElementById('quiz-game').classList.add('flex');
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            const data = quizQuestions[quizIndex];
+            document.getElementById('quiz-score').innerText = quizScore;
+            document.getElementById('quiz-progress-text').innerText = `${quizIndex + 1}/${quizQuestions.length}`;
+            document.getElementById('quiz-progress-fill').style.width = `${((quizIndex) / quizQuestions.length) * 100}%`;
+            
+            document.getElementById('quiz-question').innerText = data.text;
+            document.getElementById('quiz-image-area').innerText = data.emoji;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            document.getElementById('quiz-feedback').classList.add('hidden');
+
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "bg-blue-800/50 hover:bg-blue-700 text-white border border-blue-500/50 p-3 rounded-xl text-left flex items-center transition";
+                btn.innerHTML = `<span class="bg-yellow-500 text-blue-900 rounded-full w-6 h-6 flex items-center justify-center font-bold mr-3 text-xs">${String.fromCharCode(65+idx)}</span> ${opt}`;
+                btn.onclick = () => handleQuizAnswer(idx, btn);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(idx, btn) {
+            const btns = document.getElementById('quiz-options').querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+            
+            const correct = quizQuestions[quizIndex].correct;
+            const feedback = document.getElementById('quiz-feedback');
+            const feedbackText = document.getElementById('quiz-feedback-text');
+
+            feedback.classList.remove('hidden');
+
+            if (idx === correct) {
+                quizScore += 100;
+                document.getElementById('quiz-score').innerText = quizScore;
+                btn.classList.replace('bg-blue-800/50', 'bg-green-600');
+                feedbackText.innerText = "Correct!";
+                feedbackText.className = "text-green-400 font-bold text-lg mb-2";
+            } else {
+                btn.classList.replace('bg-blue-800/50', 'bg-red-600');
+                btns[correct].classList.replace('bg-blue-800/50', 'bg-green-600');
+                feedbackText.innerText = "Oops!";
+                feedbackText.className = "text-red-400 font-bold text-lg mb-2";
+            }
+        }
+
+        function nextQuizQuestion() {
+            quizIndex++;
+            if (quizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                document.getElementById('quiz-game').classList.add('hidden');
+                document.getElementById('quiz-game').classList.remove('flex');
+                document.getElementById('quiz-end').classList.remove('hidden');
+                
+                // Calculate and display score / total
+                const totalPossible = quizQuestions.length * 100;
+                document.getElementById('quiz-final-score').innerText = `${quizScore} / ${totalPossible}`;
+            }
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-end').classList.add('hidden');
+            document.getElementById('quiz-start').classList.remove('hidden');
+        }
+
+        // ==================== SENTENCE SCRAMBLE LOGIC ====================
+        const sentences = [
+            { id: 1, full: "One night Lion is getting ready for bed" },
+            { id: 2, full: "He reads his favorite bedtime story book" },
+            { id: 3, full: "He turns on his little night light" },
+            { id: 4, full: "Suddenly he hears a strange tapping sound" },
+            { id: 5, full: "He thinks it is a scary monster" },
+            { id: 6, full: "He grabs a baseball bat for safety" },
+            { id: 7, full: "He puts a bicycle helmet on his head" },
+            { id: 8, full: "The tapping sound gets faster and louder" },
+            { id: 9, full: "Lion runs and hides under his bed" },
+            { id: 10, full: "A little frog jumps on the windowsill" },
+            { id: 11, full: "The frog is wearing a pink tutu" },
+            { id: 12, full: "She is wearing shiny tap dancing shoes" },
+            { id: 13, full: "Lion looks ridiculous under the bed" },
+            { id: 14, full: "The frog wanted to show new moves" },
+            { id: 15, full: "Imaginations can make things seem scary" }
+        ];
+
+        let scrambleIndex = 0;
+        let currentWords = [];
+        let formedSentence = [];
+
+        function startScrambleGame() {
+            scrambleIndex = 0;
+            document.getElementById('scramble-start').classList.add('hidden');
+            document.getElementById('scramble-game').classList.remove('hidden');
+            document.getElementById('scramble-game').classList.add('flex');
+            loadScrambleRound();
+        }
+
+        function loadScrambleRound() {
+            const sentence = sentences[scrambleIndex].full;
+            currentWords = sentence.split(' ').sort(() => Math.random() - 0.5);
+            formedSentence = [];
+            
+            document.getElementById('scramble-round').innerText = scrambleIndex + 1;
+            document.getElementById('scramble-status').innerText = "Unsolved";
+            document.getElementById('scramble-status').className = "text-yellow-400 font-bold";
+            document.getElementById('scramble-feedback').classList.add('hidden');
+            
+            renderScrambleUI();
+        }
+
+        function renderScrambleUI() {
+            const bank = document.getElementById('word-bank');
+            const answer = document.getElementById('answer-area');
+
+            bank.innerHTML = '';
+            answer.innerHTML = '';
+
+            if (formedSentence.length === 0) {
+                const placeholder = document.createElement('span');
+                placeholder.className = "text-gray-500 italic text-sm";
+                placeholder.id = "placeholder-text";
+                placeholder.innerText = "Click words below to build the sentence...";
+                answer.appendChild(placeholder);
+            } else {
+                formedSentence.forEach((word, idx) => {
+                    const chip = createChip(word, true, idx);
+                    answer.appendChild(chip);
+                });
+            }
+
+            currentWords.forEach((word, idx) => {
+                const chip = createChip(word, false, idx);
+                bank.appendChild(chip);
+            });
+        }
+
+        function createChip(word, isAnswer, index) {
+            const chip = document.createElement('div');
+            chip.className = "word-chip";
+            chip.innerText = word;
+            chip.onclick = () => {
+                if (isAnswer) {
+                    formedSentence.splice(index, 1);
+                    currentWords.push(word);
+                } else {
+                    currentWords.splice(index, 1);
+                    formedSentence.push(word);
+                }
+                renderScrambleUI();
+            };
+            return chip;
+        }
+
+        function resetCurrentScramble() {
+            formedSentence = [];
+            loadScrambleRound(); 
+        }
+
+        function checkScramble() {
+            const target = sentences[scrambleIndex].full;
+            const attempt = formedSentence.join(' ');
+            const feedback = document.getElementById('scramble-feedback');
+            const msg = document.getElementById('scramble-msg');
+            
+            feedback.classList.remove('hidden');
+
+            if (attempt === target) {
+                msg.innerText = "Correct! Great job!";
+                msg.className = "text-green-400 text-lg font-bold mb-2";
+                document.getElementById('scramble-status').innerText = "Solved!";
+                document.getElementById('scramble-status').className = "text-green-400 font-bold";
+                document.getElementById('scramble-next-btn').classList.remove('hidden');
+            } else {
+                msg.innerText = "Not quite. Try again!";
+                msg.className = "text-red-400 text-lg font-bold mb-2";
+                document.getElementById('scramble-next-btn').classList.add('hidden');
+            }
+        }
+
+        function nextScrambleRound() {
+            scrambleIndex++;
+            if (scrambleIndex < sentences.length) {
+                loadScrambleRound();
+            } else {
+                document.getElementById('scramble-game').classList.add('hidden');
+                document.getElementById('scramble-game').classList.remove('flex');
+                document.getElementById('scramble-end').classList.remove('hidden');
+            }
+        }
+
+        function resetScramble() {
+            document.getElementById('scramble-end').classList.add('hidden');
+            document.getElementById('scramble-start').classList.remove('hidden');
+        }
+
+        // ==================== WORD SCRAMBLE LOGIC ====================
+        const words = [
+            { word: "LION", hint: "Who is the main character?" },
+            { word: "FROG", hint: "Who was making the tapping sound?" },
+            { word: "BEDTIME", hint: "What time of day was it?" },
+            { word: "STORY", hint: "Lion was reading a bedtime ____." },
+            { word: "SONG", hint: "Lion sang his favorite ____." },
+            { word: "WINDOW", hint: "Where did the sound come from?" },
+            { word: "MONSTER", hint: "What did Lion think the sound was?" },
+            { word: "HELMET", hint: "What did Lion put on his head?" },
+            { word: "BASEBALL", hint: "What sport was the bat for?" },
+            { word: "BAT", hint: "Lion grabbed a baseball ____." },
+            { word: "BLANKET", hint: "What did Lion hide under?" },
+            { word: "TAP", hint: "The sound was 'Tap, ____, Tap'." },
+            { word: "SHOES", hint: "The frog wore tap dancing ____." },
+            { word: "TUTU", hint: "The frog wore a pink ____." },
+            { word: "DANCE", hint: "The frog wanted to show a ____." },
+            { word: "SCARED", hint: "How did Lion feel?" },
+            { word: "RIDICULOUS", hint: "Lion looked silly or ____." },
+            { word: "NIGHTLIGHT", hint: "A small light for sleeping." },
+            { word: "IMAGINATION", hint: "Your mind can play tricks on you." },
+            { word: "SQUEALS", hint: "Lion makes a high pitched cry." }
+        ];
+
+        let wordIndex = 0;
+        let currentLetters = [];
+        let formedWord = [];
+
+        function startWordGame() {
+            wordIndex = 0;
+            document.getElementById('word-start').classList.add('hidden');
+            document.getElementById('word-game').classList.remove('hidden');
+            document.getElementById('word-game').classList.add('flex');
+            loadWordRound();
+        }
+
+        function loadWordRound() {
+            const targetData = words[wordIndex];
+            const targetWord = targetData.word;
+            currentLetters = targetWord.split('').sort(() => Math.random() - 0.5);
+            formedWord = [];
+            
+            document.getElementById('word-round').innerText = wordIndex + 1;
+            document.getElementById('word-status').innerText = "Unsolved";
+            document.getElementById('word-status').className = "text-yellow-400 font-bold";
+            document.getElementById('word-hint').innerText = targetData.hint;
+            document.getElementById('word-feedback').classList.add('hidden');
+            
+            renderWordUI();
+        }
+
+        function renderWordUI() {
+            const bank = document.getElementById('letter-bank');
+            const answer = document.getElementById('letter-answer-area');
+
+            bank.innerHTML = '';
+            answer.innerHTML = '';
+
+            if (formedWord.length === 0) {
+                const placeholder = document.createElement('span');
+                placeholder.className = "text-gray-500 italic text-sm";
+                placeholder.id = "letter-placeholder";
+                placeholder.innerText = "Click letters to build the word...";
+                answer.appendChild(placeholder);
+            } else {
+                formedWord.forEach((letter, idx) => {
+                    const chip = createLetterChip(letter, true, idx);
+                    answer.appendChild(chip);
+                });
+            }
+
+            currentLetters.forEach((letter, idx) => {
+                const chip = createLetterChip(letter, false, idx);
+                bank.appendChild(chip);
+            });
+        }
+
+        function createLetterChip(letter, isAnswer, index) {
+            const chip = document.createElement('div');
+            chip.className = "letter-chip";
+            chip.innerText = letter;
+            chip.onclick = () => {
+                if (isAnswer) {
+                    formedWord.splice(index, 1);
+                    currentLetters.push(letter);
+                } else {
+                    currentLetters.splice(index, 1);
+                    formedWord.push(letter);
+                }
+                renderWordUI();
+            };
+            return chip;
+        }
+
+        function resetCurrentWord() {
+            formedWord = [];
+            loadWordRound();
+        }
+
+        function checkWord() {
+            const target = words[wordIndex].word;
+            const attempt = formedWord.join('');
+            const feedback = document.getElementById('word-feedback');
+            const msg = document.getElementById('word-msg');
+            
+            feedback.classList.remove('hidden');
+
+            if (attempt === target) {
+                msg.innerText = "Correct! " + target;
+                msg.className = "text-green-400 text-lg font-bold mb-2";
+                document.getElementById('word-status').innerText = "Solved!";
+                document.getElementById('word-status').className = "text-green-400 font-bold";
+                document.getElementById('word-next-btn').classList.remove('hidden');
+            } else {
+                msg.innerText = "Try again!";
+                msg.className = "text-red-400 text-lg font-bold mb-2";
+                document.getElementById('word-next-btn').classList.add('hidden');
+            }
+        }
+
+        function nextWordRound() {
+            wordIndex++;
+            if (wordIndex < words.length) {
+                loadWordRound();
+            } else {
+                document.getElementById('word-game').classList.add('hidden');
+                document.getElementById('word-game').classList.remove('flex');
+                document.getElementById('word-end').classList.remove('hidden');
+            }
+        }
+
+        function resetWordGame() {
+            document.getElementById('word-end').classList.add('hidden');
+            document.getElementById('word-start').classList.remove('hidden');
+        }
+
+        // ==================== DICTATION LOGIC ====================
+        const dictationSentences = [
+            "Lion is getting ready for bed",
+            "He hears a sound at the window",
+            "He thinks it is a monster",
+            "He grabs his red baseball bat",
+            "He puts on a bicycle helmet",
+            "He hides under the warm blanket",
+            "A frog jumps on the windowsill",
+            "The frog wears a tutu and tap shoes",
+            "Lion feels very ridiculous",
+            "Imagination makes things scarier"
+        ];
+
+        let dictationIndex = 0;
+        let dictationScore = 0;
+
+        function startDictationGame() {
+            dictationIndex = 0;
+            dictationScore = 0;
+            document.getElementById('dictation-start').classList.add('hidden');
+            document.getElementById('dictation-game').classList.remove('hidden');
+            document.getElementById('dictation-game').classList.add('flex');
+            loadDictationRound();
+        }
+
+        function loadDictationRound() {
+            document.getElementById('dictation-round').innerText = dictationIndex + 1;
+            document.getElementById('dictation-input').value = '';
+            document.getElementById('dictation-feedback').classList.add('hidden');
+        }
+
+        function playDictationAudio() {
+            const sentence = dictationSentences[dictationIndex];
+            const utterance = new SpeechSynthesisUtterance(sentence);
+            utterance.rate = 0.9; // Slightly slower for clarity
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function checkDictation() {
+            const input = document.getElementById('dictation-input').value.trim();
+            const target = dictationSentences[dictationIndex];
+            
+            const feedback = document.getElementById('dictation-feedback');
+            const msg = document.getElementById('dictation-msg');
+            const correction = document.getElementById('dictation-correction');
+            
+            feedback.classList.remove('hidden');
+            
+            // Strict comparison: input must match target exactly
+            if (input === target) {
+                dictationScore++;
+                msg.innerText = "Correct! Perfect match!";
+                msg.className = "text-green-400 font-bold text-lg mb-2";
+                correction.classList.add('hidden');
+            } else {
+                msg.innerText = "Incorrect.";
+                msg.className = "text-red-400 font-bold text-lg mb-2";
+                correction.innerText = `Correct answer: "${target}"`;
+                correction.classList.remove('hidden');
+            }
+        }
+
+        function nextDictation() {
+            dictationIndex++;
+            if (dictationIndex < dictationSentences.length) {
+                loadDictationRound();
+            } else {
+                document.getElementById('dictation-game').classList.add('hidden');
+                document.getElementById('dictation-game').classList.remove('flex');
+                document.getElementById('dictation-end').classList.remove('hidden');
+                document.getElementById('dictation-final-score').innerText = `${dictationScore} / 10`;
+            }
+        }
+
+        function resetDictationGame() {
+            document.getElementById('dictation-end').classList.add('hidden');
+            document.getElementById('dictation-start').classList.remove('hidden');
+        }
+
+        // ==================== MEMORY LOGIC ====================
+        const memoryIcons = ['🦁', '🐸', '🛏️', '⚾', '⛑️', '🩰', '👞', '💡'];
+        let memoryCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let memoryMoves = 0;
+        let isProcessing = false;
+
+        function startMemoryGame() {
+            matchedPairs = 0;
+            memoryMoves = 0;
+            document.getElementById('memory-moves').innerText = '0';
+            document.getElementById('memory-pairs').innerText = '0/8';
+            document.getElementById('memory-start').classList.add('hidden');
+            document.getElementById('memory-end').classList.add('hidden');
+            document.getElementById('memory-game').classList.remove('hidden');
+            document.getElementById('memory-game').classList.add('flex');
+            
+            // Create pairs and shuffle
+            const deck = [...memoryIcons, ...memoryIcons];
+            deck.sort(() => Math.random() - 0.5);
+            
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            
+            deck.forEach((icon, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card w-full h-full';
+                card.innerHTML = `
+                    <div class="memory-card-inner">
+                        <div class="memory-card-front">?</div>
+                        <div class="memory-card-back">${icon}</div>
+                    </div>
+                `;
+                card.onclick = () => flipCard(card, icon);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipCard(card, icon) {
+            if (isProcessing || card.classList.contains('flipped') || flippedCards.length >= 2) return;
+
+            card.classList.add('flipped');
+            flippedCards.push({ card, icon });
+
+            if (flippedCards.length === 2) {
+                memoryMoves++;
+                document.getElementById('memory-moves').innerText = memoryMoves;
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            isProcessing = true;
+            const [c1, c2] = flippedCards;
+
+            if (c1.icon === c2.icon) {
+                // Match
+                matchedPairs++;
+                document.getElementById('memory-pairs').innerText = `${matchedPairs}/8`;
+                flippedCards = [];
+                isProcessing = false;
+                
+                if (matchedPairs === 8) {
+                    setTimeout(() => {
+                        document.getElementById('memory-game').classList.add('hidden');
+                        document.getElementById('memory-game').classList.remove('flex');
+                        document.getElementById('memory-end').classList.remove('hidden');
+                        document.getElementById('final-moves').innerText = memoryMoves;
+                    }, 1000);
+                }
+            } else {
+                // No Match
+                setTimeout(() => {
+                    c1.card.classList.remove('flipped');
+                    c2.card.classList.remove('flipped');
+                    flippedCards = [];
+                    isProcessing = false;
+                }, 1000);
+            }
+        }
+
+        // ==================== LEADERBOARD LOGIC ====================
+        
+        // Helper to get data
+        function getScores(type) {
+            const data = localStorage.getItem(`lionQuest_${type}`);
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Helper to save data
+        function saveScoreData(type, newScoreObj) {
+            let scores = getScores(type);
+            scores.push(newScoreObj);
+            
+            // Sort
+            if (type === 'quiz') {
+                // Higher is better
+                scores.sort((a, b) => b.score - a.score);
+            } else if (type === 'memory') {
+                // Lower is better (moves)
+                scores.sort((a, b) => a.score - b.score);
+            }
+
+            // Keep top 5
+            scores = scores.slice(0, 5);
+            
+            localStorage.setItem(`lionQuest_${type}`, JSON.stringify(scores));
+        }
+
+        function saveQuizScore() {
+            const nameInput = document.getElementById('player-name-quiz');
+            const name = nameInput.value.trim() || "Brave Lion";
+            
+            saveScoreData('quiz', { name: name, score: quizScore, date: new Date().toLocaleDateString() });
+            
+            // Clear input
+            nameInput.value = '';
+            
+            // Go to leaderboard
+            switchTab('leaderboard');
+        }
+
+        function saveMemoryScore() {
+            const nameInput = document.getElementById('player-name-memory');
+            const name = nameInput.value.trim() || "Smart Lion";
+            
+            saveScoreData('memory', { name: name, score: memoryMoves, date: new Date().toLocaleDateString() });
+            
+            // Clear input
+            nameInput.value = '';
+            
+            // Go to leaderboard
+            switchTab('leaderboard');
+        }
+
+        function renderLeaderboard() {
+            // Render Quiz
+            const quizList = document.getElementById('quiz-leaderboard-list');
+            const quizScores = getScores('quiz');
+            
+            if (quizScores.length === 0) {
+                quizList.innerHTML = '<p class="text-gray-400 text-sm italic">No scores yet...</p>';
+            } else {
+                quizList.innerHTML = `
+                    <table class="leaderboard-table">
+                        ${quizScores.map((s, i) => `
+                            <tr class="leaderboard-row">
+                                <td class="leaderboard-cell text-left">
+                                    <span class="text-gold-light mr-2">#${i+1}</span>
+                                    <span class="text-white">${s.name}</span>
+                                </td>
+                                <td class="leaderboard-cell">${s.score} pts</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                `;
+            }
+
+            // Render Memory
+            const memList = document.getElementById('memory-leaderboard-list');
+            const memScores = getScores('memory');
+            
+            if (memScores.length === 0) {
+                memList.innerHTML = '<p class="text-gray-400 text-sm italic">No records yet...</p>';
+            } else {
+                memList.innerHTML = `
+                    <table class="leaderboard-table">
+                        ${memScores.map((s, i) => `
+                            <tr class="leaderboard-row">
+                                <td class="leaderboard-cell text-left">
+                                    <span class="text-gold-light mr-2">#${i+1}</span>
+                                    <span class="text-white">${s.name}</span>
+                                </td>
+                                <td class="leaderboard-cell">${s.score} moves</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                `;
+            }
+        }
+
+        function clearLeaderboard() {
+            if(confirm("Are you sure you want to clear all high scores?")) {
+                localStorage.removeItem('lionQuest_quiz');
+                localStorage.removeItem('lionQuest_memory');
+                renderLeaderboard();
+            }
+        }
+
+    </script>
+</body>
+</html>
