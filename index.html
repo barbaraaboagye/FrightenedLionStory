@@ -3,78 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Assistant</title>
+    <title>The Frightened Lion | A Blue Gold Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f9; }
-        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        textarea { width: 100%; height: 100px; margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #0056b3; }
-        .status { margin-top: 10px; font-size: 0.9rem; color: #666; text-align: center; }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+        :root {
+            --blue-deep: #0f172a;
+            --blue-royal: #1e3a8a;
+            --gold-main: #fbbf24;
+            --gold-light: #fcd34d;
+            --gold-dark: #b45309;
+        }
+
+        body {
+            background: radial-gradient(circle at center, var(--blue-royal), var(--blue-deep));
+            font-family: 'Lato', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .font-header { font-family: 'Cinzel', serif; }
+
+        .text-gold-gradient {
+            background: linear-gradient(to bottom, var(--gold-light), var(--gold-main));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-main), var(--gold-dark));
+            border: 2px solid var(--gold-light);
+            color: var(--blue-deep);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(251, 191, 36, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .input-gold, .textarea-gold {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--gold-dark);
+            color: white;
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .input-gold { padding: 10px 15px; width: 100%; max-width: 400px; text-align: center; border-radius: 99px; }
+        .textarea-gold { padding: 15px; width: 100%; min-height: 150px; resize: none; }
+
+        .leaderboard-table { width: 100%; max-width: 500px; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; }
+        .leaderboard-row { background: rgba(30, 58, 138, 0.4); transition: transform 0.2s; }
+        .leaderboard-cell { padding: 12px; border-top: 1px solid rgba(251, 191, 36, 0.2); border-bottom: 1px solid rgba(251, 191, 36, 0.2); }
+
+        .nav-tab {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: #9ca3af;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            background: var(--blue-royal);
+            border-color: var(--gold-main);
+            color: var(--gold-light);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .word-chip {
+            background: rgba(30, 58, 138, 0.6);
+            border: 1px solid var(--gold-main);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .cloze-blank {
+            display: inline-block;
+            min-width: 80px;
+            border-bottom: 2px solid var(--gold-main);
+            color: var(--gold-light);
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+        .cloze-filled { background: rgba(30, 58, 138, 0.6); border-radius: 4px; }
+
+        .letter-chip {
+            background: rgba(30, 58, 138, 0.6);
+            border: 1px solid var(--gold-main);
+            color: white;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .memory-card { perspective: 1000px; cursor: pointer; }
+        .memory-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .memory-card.flipped .memory-card-inner { transform: rotateY(180deg); }
+        .memory-card-front, .memory-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 0.75rem; border: 2px solid var(--gold-dark); }
+        .memory-card-front { background: linear-gradient(135deg, var(--blue-royal), var(--blue-deep)); color: var(--gold-main); font-size: 2rem; }
+        .memory-card-back { background: linear-gradient(135deg, var(--gold-light), var(--gold-main)); color: var(--blue-deep); transform: rotateY(180deg); font-size: 2.5rem; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .pulse-gold { animation: pulse-gold 2s infinite; }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); } 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); } }
+
+        .progress-bar-container { background: rgba(0,0,0,0.5); border: 1px solid var(--gold-dark); border-radius: 9999px; overflow: hidden; }
+        .progress-bar-fill { background: linear-gradient(90deg, var(--gold-dark), var(--gold-main)); transition: width 0.5s ease-in-out; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center p-4" onclick="initAudio()">
 
-<div class="container">
-    <h2>Speech Synthesis</h2>
-    <textarea id="text-to-speak" placeholder="Type something for the AI to say..."></textarea>
-    <button id="speak-btn">Speak Now</button>
-    <div id="status" class="status">Idle</div>
-</div>
+    <div id="game-container" class="glass-card w-full max-w-4xl rounded-2xl p-6 md:p-8 relative overflow-hidden min-h-[680px] flex flex-col">
+        
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600"></div>
+        <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600"></div>
 
-<script>
-    const speakBtn = document.getElementById('speak-btn');
-    const textInput = document.getElementById('text-to-speak');
-    const statusDiv = document.getElementById('status');
+        <div class="flex justify-center gap-2 md:gap-3 mb-6 z-10 relative flex-wrap">
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-tab active px-3 py-2 rounded-full font-bold uppercase text-xs">Story Quiz</button>
+            <button onclick="switchTab('scramble')" id="tab-scramble" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Sentences</button>
+            <button onclick="switchTab('cloze')" id="tab-cloze" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Fill Blanks</button>
+            <button onclick="switchTab('word')" id="tab-word" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Word Scramble</button>
+            <button onclick="switchTab('grammar')" id="tab-grammar" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Grammar</button>
+            <button onclick="switchTab('dictation')" id="tab-dictation" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Dictation</button>
+            <button onclick="switchTab('reading')" id="tab-reading" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Story Reading</button>
+            <button onclick="switchTab('speaking')" id="tab-speaking" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Speaking</button>
+            <button onclick="switchTab('writing')" id="tab-writing" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Writing</button>
+            <button onclick="switchTab('memory')" id="tab-memory" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">Memory</button>
+            <button onclick="switchTab('leaderboard')" id="tab-leaderboard" class="nav-tab px-3 py-2 rounded-full font-bold uppercase text-xs">🏆 Leaders</button>
+        </div>
 
-    // Main function to solve the speech problem
-    function speak() {
-        // 1. Check if the browser supports Speech Synthesis
-        if (!('speechSynthesis' in window)) {
-            alert("Sorry, your browser does not support speech synthesis.");
-            return;
+        <div id="quiz-view" class="flex-grow flex flex-col">
+            <div id="quiz-start" class="text-center space-y-8 flex-grow flex flex-col justify-center items-center">
+                <div class="animate-float"><span class="text-8xl">🦁</span></div>
+                <h1 class="font-header text-4xl font-bold text-gold-gradient">The Frightened Lion</h1>
+                <button onclick="startQuizGame()" class="btn-gold px-8 py-3 rounded-full text-lg pulse-gold">Play Quiz</button>
+            </div>
+            <div id="quiz-game" class="hidden flex-col h-full">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-yellow-400 font-bold">Score: <span id="quiz-score">0</span></span>
+                    <div class="w-1/3 progress-bar-container h-2"><div id="quiz-progress-fill" class="progress-bar-fill h-full w-0"></div></div>
+                </div>
+                <div id="quiz-image-area" class="text-center text-6xl mb-4"></div>
+                <h2 id="quiz-question" class="font-header text-2xl text-center mb-6"></h2>
+                <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
+                <div id="quiz-feedback" class="hidden text-center p-3"><p id="quiz-feedback-text" class="font-bold mb-2"></p><button onclick="nextQuizQuestion()" class="btn-gold px-6 py-1 rounded-full text-sm">Next ➜</button></div>
+            </div>
+            <div id="quiz-end" class="hidden text-center space-y-6 flex-grow flex flex-col justify-center items-center">
+                <h2 class="text-3xl text-gold-gradient font-bold">Training Complete!</h2>
+                <div class="text-4xl font-bold text-yellow-400" id="quiz-final-score">0</div>
+                <input type="text" id="player-name-quiz" class="input-gold" placeholder="Your Name">
+                <button onclick="saveQuizScore()" class="btn-gold px-8 py-2 rounded-full">Save Score</button>
+            </div>
+        </div>
+
+        <div id="reading-view" class="hidden flex-grow flex flex-col items-center">
+            <h1 class="font-header text-4xl font-bold text-gold-gradient mb-6">The Lion's Story</h1>
+            <div class="bg-blue-900/50 p-6 rounded-xl overflow-y-auto max-h-[400px] text-lg leading-relaxed">
+                <p>One night, Lion is getting ready for bed. He reads his favorite bedtime story and sings his favorite bedtime song. He turns on his night light. Then he hears a sound. Tap, tap. "What's that sound?" he whispers. He grabs a baseball bat and a bicycle helmet. He hides under the bed. Suddenly, a little frog jumps on the windowsill. The frog is wearing a pink tutu and tap shoes. She wanted to show him new dance moves! Lion feels ridiculous.</p>
+            </div>
+        </div>
+
+        <div id="cloze-view" class="hidden flex-grow flex flex-col">
+            <div id="cloze-game" class="flex flex-col h-full">
+                <div id="cloze-text-area" class="bg-blue-900/40 p-6 rounded-xl text-xl mb-6 min-h-[150px]"></div>
+                <div id="cloze-word-bank" class="flex flex-wrap gap-3 justify-center mb-6"></div>
+                <div id="cloze-feedback" class="hidden text-center mb-4"><p id="cloze-msg" class="font-bold"></p><button id="cloze-next-btn" onclick="nextClozeRound()" class="btn-gold px-6 py-2 rounded-full">Next Level ➜</button></div>
+                <button onclick="checkClozeAnswer()" id="cloze-check-btn" class="btn-gold px-8 py-2 rounded-full mx-auto">Check Answers</button>
+            </div>
+        </div>
+
+        <div id="dictation-view" class="hidden flex-grow flex flex-col items-center justify-center">
+            <div id="dictation-game" class="w-full max-w-xl text-center">
+                <button onclick="playDictationAudio()" class="bg-blue-600 rounded-full w-24 h-24 text-4xl mb-4 shadow-lg mx-auto block">🔊</button>
+                <div class="flex justify-center gap-2 mb-6">
+                    <button onclick="setDictationSpeed(0.6)" id="speed-slow" class="px-3 py-1 text-xs">Slow</button>
+                    <button onclick="setDictationSpeed(0.9)" id="speed-normal" class="px-3 py-1 text-xs font-bold text-yellow-400">Normal</button>
+                </div>
+                <input type="text" id="dictation-input" class="input-gold w-full text-lg mb-6" placeholder="Type what you hear...">
+                <button onclick="checkDictation()" class="btn-gold px-10 py-3 rounded-full">Check Answer</button>
+                <div id="dictation-feedback" class="hidden mt-6 bg-blue-900/50 p-4 rounded-xl">
+                    <p id="dictation-msg" class="font-bold"></p>
+                    <p id="dictation-correction" class="text-yellow-400 italic hidden"></p>
+                    <button onclick="nextDictation()" class="btn-gold px-6 py-2 rounded-full mt-2 hidden">Next ➜</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="leaderboard-view" class="hidden flex-grow flex flex-col items-center">
+            <h1 class="font-header text-3xl font-bold text-gold-gradient mb-6">Hall of Fame</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                <div class="bg-blue-900/40 p-4 rounded-xl"><h3 class="text-yellow-400 font-bold mb-4">Quiz Scores</h3><div id="quiz-leaderboard-list"></div></div>
+                <div class="bg-blue-900/40 p-4 rounded-xl"><h3 class="text-yellow-400 font-bold mb-4">Memory Records</h3><div id="memory-leaderboard-list"></div></div>
+            </div>
+            <button onclick="clearLeaderboard()" class="text-xs text-red-400 mt-8 underline">Clear All</button>
+        </div>
+
+        <div id="scramble-view" class="hidden"></div>
+        <div id="word-view" class="hidden"></div>
+        <div id="grammar-view" class="hidden"></div>
+        <div id="speaking-view" class="hidden"></div>
+        <div id="writing-view" class="hidden"></div>
+        <div id="memory-view" class="hidden"></div>
+
+    </div>
+
+    <script>
+        // ==================== VOICE CONTROLLER ====================
+        let selectedEnglishVoice = null;
+        function loadEnglishVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            // Prioritize high quality "Google" or "Premium" voices
+            selectedEnglishVoice = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) || 
+                                   voices.find(v => v.name.includes('Natural') && v.lang.startsWith('en')) ||
+                                   voices.find(v => v.lang.startsWith('en-US')) || voices[0];
+        }
+        window.speechSynthesis.onvoiceschanged = loadEnglishVoices;
+        loadEnglishVoices();
+
+        // ==================== AUDIO TONES ====================
+        let audioCtx;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playTone(freq, type, dur) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            osc.connect(g); g.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + dur);
+        }
+        function playSound(t) {
+            initAudio();
+            if (t==='click') playTone(400,'sine',0.1);
+            if (t==='correct') playTone(600,'sine',0.2);
+            if (t==='wrong') playTone(200,'sawtooth',0.3);
+            if (t==='win') { playTone(500,'sine',0.1); setTimeout(()=>playTone(800,'sine',0.4),200); }
         }
 
-        // 2. Cancel any ongoing speech to prevent overlapping
-        window.speechSynthesis.cancel();
-
-        const text = textInput.value.trim();
-        if (text === "") {
-            statusDiv.innerText = "Please enter some text first!";
-            return;
+        // ==================== TABS ====================
+        function switchTab(t) {
+            playSound('click');
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${t}`).classList.add('active');
+            const views = ['quiz', 'scramble', 'word', 'dictation', 'speaking', 'memory', 'leaderboard', 'cloze', 'reading', 'writing', 'grammar'];
+            views.forEach(v => {
+                const el = document.getElementById(`${v}-view`);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById(`${t}-view`).classList.remove('hidden');
+            if(t==='leaderboard') renderLeaderboard();
         }
 
-        // 3. Create the Utterance object
-        const utterance = new SpeechSynthesisUtterance(text);
+        // ==================== QUIZ LOGIC ====================
+        const quizQuestions = [
+            { text: "What sound did Lion hear?", emoji: "🔊", options: ["Roar", "Tap Tap", "Buzz", "Moo"], correct: 1 },
+            { text: "What did Lion put on his head?", emoji: "⛑️", options: ["Crown", "Cap", "Helmet", "Pot"], correct: 2 },
+            { text: "Who was making the sound?", emoji: "🐸", options: ["Monster", "Mouse", "Frog", "Bird"], correct: 2 }
+        ];
+        let quizIdx = 0, quizScore = 0;
+        function startQuizGame() {
+            quizIdx = 0; quizScore = 0;
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-game').classList.remove('hidden');
+            loadQuizQ();
+        }
+        function loadQuizQ() {
+            const q = quizQuestions[quizIdx];
+            document.getElementById('quiz-question').innerText = q.text;
+            document.getElementById('quiz-image-area').innerText = q.emoji;
+            const opts = document.getElementById('quiz-options'); opts.innerHTML = '';
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            q.options.forEach((o, i) => {
+                const b = document.createElement('button');
+                b.className = "bg-blue-800/50 p-3 rounded-xl text-left border border-blue-500/50";
+                b.innerText = o; b.onclick = () => {
+                    if (i === q.correct) {
+                        playSound('correct'); quizScore += 100; b.classList.add('bg-green-600');
+                        document.getElementById('quiz-feedback').classList.remove('hidden');
+                        document.getElementById('quiz-feedback-text').innerText = "Correct!";
+                        opts.querySelectorAll('button').forEach(btn => btn.disabled = true);
+                    } else { playSound('wrong'); b.classList.add('bg-red-600'); }
+                };
+                opts.appendChild(b);
+            });
+        }
+        function nextQuizQuestion() {
+            quizIdx++;
+            if (quizIdx < quizQuestions.length) loadQuizQ();
+            else { document.getElementById('quiz-game').classList.add('hidden'); document.getElementById('quiz-end').classList.remove('hidden'); document.getElementById('quiz-final-score').innerText = quizScore; }
+        }
 
-        // 4. Configuration (Optional)
-        utterance.pitch = 1.0; 
-        utterance.rate = 1.0;  
-        utterance.volume = 1.0;
+        // ==================== DICTATION LOGIC ====================
+        const dictSentences = ["Lion is getting ready for bed.", "He thinks it is a monster.", "The frog wears a pink tutu."];
+        let dictIdx = 0, dictRate = 0.9;
+        function setDictationSpeed(r) { dictRate = r; playSound('click'); }
+        function playDictationAudio() {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(dictSentences[dictIdx]);
+            if (selectedEnglishVoice) u.voice = selectedEnglishVoice;
+            u.lang = 'en-US'; u.rate = dictRate; window.speechSynthesis.speak(u);
+        }
+        function checkDictation() {
+            const input = document.getElementById('dictation-input').value.trim().toLowerCase().replace(/[.,!]/g,"");
+            const target = dictSentences[dictIdx].toLowerCase().replace(/[.,!]/g,"");
+            const fb = document.getElementById('dictation-feedback');
+            fb.classList.remove('hidden');
+            if (input === target) {
+                playSound('correct'); fb.querySelector('p').innerText = "Correct!";
+                document.getElementById('dictation-correction').innerText = dictSentences[dictIdx];
+                document.getElementById('dictation-correction').classList.remove('hidden');
+                fb.querySelector('button').classList.remove('hidden');
+            } else { playSound('wrong'); fb.querySelector('p').innerText = "Try again!"; }
+        }
+        function nextDictation() {
+            dictIdx = (dictIdx + 1) % dictSentences.length;
+            document.getElementById('dictation-input').value = '';
+            document.getElementById('dictation-feedback').classList.add('hidden');
+        }
 
-        // 5. Event Listeners for feedback
-        utterance.onstart = () => {
-            statusDiv.innerText = "Speaking...";
-            speakBtn.disabled = True;
-        };
+        // ==================== LEADERBOARD ====================
+        function renderLeaderboard() {
+            const q = JSON.parse(localStorage.getItem('lion_quiz') || '[]');
+            document.getElementById('quiz-leaderboard-list').innerHTML = q.map(s => `<div class="flex justify-between"><span>${s.name}</span><span>${s.score}</span></div>`).join('');
+        }
+        function saveQuizScore() {
+            const n = document.getElementById('player-name-quiz').value || 'Brave Lion';
+            const q = JSON.parse(localStorage.getItem('lion_quiz') || '[]');
+            q.push({name:n, score:quizScore}); q.sort((a,b)=>b.score-a.score);
+            localStorage.setItem('lion_quiz', JSON.stringify(q.slice(0,5)));
+            switchTab('leaderboard');
+        }
+        function clearLeaderboard() { localStorage.clear(); renderLeaderboard(); }
 
-        utterance.onend = () => {
-            statusDiv.innerText = "Finished speaking.";
-            speakBtn.disabled = False;
-        };
-
-        utterance.onerror = (event) => {
-            console.error("SpeechSynthesis Error:", event);
-            statusDiv.innerText = "An error occurred.";
-        };
-
-        // 6. Trigger the speech
-        window.speechSynthesis.speak(utterance);
-    }
-
-    // Attach event listener to button
-    speakBtn.addEventListener('click', speak);
-</script>
-
+        // Initialize first view
+        switchTab('quiz');
+    </script>
 </body>
 </html>
